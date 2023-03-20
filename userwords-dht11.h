@@ -14,3 +14,9 @@ int readhumid( int  val  ){
    return val;
 }
 
+
+#define USER_WORDS \
+      Y(rtemp, PUSH readtemp (n0); NIP ) \
+      Y(rhumid, PUSH readhumid (n0); NIP ) \  
+      Y(initdh11, setupdht11 (); NIP ) 
+
