@@ -1,0 +1,1223 @@
+"
+Glossary of ESP32forth v7.0.5.4 -  up to v7.0.619",,,,"last updated
+July 2022"
+,WORD LIST,STACK EFFECT,DESCRIPTION / EXAMPLE,
+,immediate words are shown red,,Optionally for off-line reading - download this spreadsheet as an .ods file and open in libreoffice calc - the links will still work,
+,Block File system,,,VOCABULARY
+,,,,
+1,block,( n -- a ),Get a 1024 character block,forth
+2,block-fid,( – n ),"value, default = -1",forth
+3,block-id,( -- n ),"value, default = -1",forth
+4,buffer,( n -- a ),Get a 1024 byte block without regard to old contents,forth
+5,copy,( from to -- ),Copy contents of block 'from' to block 'to',forth
+6,default-use,,"deferred word, defaults to common-default-use",forth
+7,empty-buffers,( -- ),Empty all buffers,forth
+8,flush,( -- ),Save and empty all buffers,forth
+9,list,( n -- ),List block n of 1024 characters to the display,forth
+10,load,( n -- ),Evaluate block n of 1024 characters as the input stream,forth
+11,open-blocks,( a n -- ),Open a file as the block file,forth
+12,save-buffers,( -- ),Save all buffers,forth
+13,scr,( -- adr ),Pointer to last listed block,forth
+14,thru,( a b -- ),Load blocks a thru b,forth
+15,update,( -- ),Mark the last block modified,forth
+16,use,"( ""name"" -- )","Use ""name"" as the blockfile, e.g. USE /spiffs/foo",forth
+17,,,,
+18,,,,
+19,Block File Editor,,,VOCABULARY
+20,,,,
+21,a,"( n ""text"" -- )","Add (insert) a line in the current block with the words that follow in the input stream, terminated with <cr>",editor
+22,d,( n -- ),Delete a line in the current block,editor
+23,e,( n -- ),Clear a line in the current block,editor
+24,l,( – ),List the current 1024 character block,editor
+25,n,( – ),Move to the next 1024 character block,editor
+26,p,( – ),Move to the previous 1024 character block,editor
+27,r,"( n ""text"" -- )","Replace a line in the current block with the words that follow in the input stream, terminated with <cr>",editor
+28,wipe,( -- ),Erase the 1024 character block,editor
+29,editor,( -- ),vocabulary name of the block file editor,forth
+30,,,,
+31,,,,
+32,Branching,,,VOCABULARY
+33,,,,
+34,[ELSE],( – ),Interpret time ELSE,forth
+35,[IF],( f – ),"Interpret time IF ( conditional interpretation of words that follow, dependent on flag f ) - see one example of use below",forth
+36,[THEN],(–),Interpret time THEN,forth
+37,aft,( -- ),":  aft-example     ( n -- )
+for    <words that run only 1st interation>
+aft    <words that run for all but the 1st iteration>
+then <words that run on all iterations>
+next ;",forth
+38,ahead,( --  ),"continue execution after then e.g.
+: myword333 ahead 222 444 then ; running myword would leave 333 on the stack",forth
+39,DEFINED?,"( ""name"" -- xt | 0 )","If the name that follows in the input stream is found in the dictionary, the execution address of the word is placed on the stack, else 0 if not found e.g. DEFINED? CREATE returns 1073637288. DEFINED? BABA returns 0
+",forth
+40,else,(  – ),"part of a conditional structure
+e.g. if <forth words else <more forth words> then
+e.g. if <forth words> then",forth
+41,if,( flag – ),"Conditional structure, which executes depends on flag
+e.g. if <forth words else <more forth words> then
+e.g. if <forth words> then",forth
+42,then,(  -- ),"part of a conditional structure
+e.g. if <forth words else <more forth words> then
+e.g. if <forth words> then",forth
+43,,,,
+44,,,,
+45,Character I/O,,,VOCABULARY
+46,,,,
+47,".""",( “string” – ),display the string that follows in the input stream until a terminating “,forth
+48,accept,( b u1 -- b u2 ),accepts u1 characters to b. u2 returned is the actual count of characters received,forth
+49,char,"( ""character"" -- c )",Convert the non-space char that follows in the input stream and place it's value tos e.g. char 0 places 48 on top of the stack,forth
+50,cr,( -- ),"send carriage return, line feed to the display",forth
+51,emit,( c – ),display the ascii character c,forth
+52,key,( – chr ),deferred word - reads the next character in the input stream - defaults to word serial-key,forth
+53,key?,( -- cnt ),"deferred word - returns cnt, the number of characters waiting to be read. cnt=0 if no characters waiting - defaults to word serial-key?",forth
+54,ok,( -- ),display the string ok,forth
+55,page,( -- ),Emit 30 CR characters to the display,forth
+56,PARSE,"( c ""wordtoparse"" -- addr cnt )","Parse the next word in the input stream, terminating on character c. Leave the address and character count cnt of word.If the parse area was empty then cnt=0",forth
+57,prompt,,send ok and <cr> to the display,forth
+58,space,( -- ),Emit a space character to the display,forth
+59,tib,( -- addr ),returns the address of the the terminal input buffer where input text string is held,forth
+60,type,( addr n -- ),"deferred word - display an n long character string, located at addr, on the display - as a default executes serial-type",forth
+61,ip.,( n --  ),print n in IP address format e.g. 192.168.1.2,web-interface
+62,ip#,( n1 -- n2 ),print one section of an ip address,web-interface
+63,,,,
+64,,,,
+65,Comment,,,VOCABULARY
+66,,,,
+67,(,"( ""string""-- )","Start of a 1 line comment, terminated with ). Most often used to document the stack effect of  word",forth
+68,\,,"Start of a 1 line comment, no termination needed",forth
+69,,,,
+70,,,,
+71,Comparison,,,VOCABULARY
+72,,,,
+73,<,( n1 n2 -- f ),"f=true of n1 less than n2, else f=false",forth
+74,<=,( n1 n2 -- f ),"f=true if n1 less than or equal n2, else f=false",forth
+75,<>,( n1 n2 -- f ),"f=true if n1 not equal n2, else f=false",forth
+76,=,( n1 n2 -- f ),"f=true if n1 equals n2, else f=false",forth
+77,>,( n1 n2 -- f ),"f=true if n1 greater than n2, else f=false",forth
+78,>=,( n1 n2 -- f ),"f=true if n1 greater than or equal n2, else f=false",forth
+79,0<,( n -- f ),"f=true if n less than zero, else f=false",forth
+80,0<>,( n -- f ),"f=true if n not equal zero, else f=false",forth
+81,0=,( n -- f ),"f=true if n equals zero, else f=false",forth
+82,,,,
+83,,,,
+84,Debug,,,VOCABULARY
+85,,,,
+86,.s,( – ),display the data stack depth and data stack on one line of the display,forth
+87,dump,( addr n – ),"display memory starting at addr, for n longs",forth
+88,dump-file,( a n a n -- ),,forth
+89,order,( – ),Print the vocabulary search order,forth
+90,see,"( ""text"" -- )",Attempt to decompile the word which follows in the input stream,forth
+91,vlist,( -- ),List the words in the context vocabulary (not chains) e.g. vlist WiFi only lists words in the Wifi vocabulary,forth
+92,words,( -- ),List the words in the context vocabulary (including chains),forth
+93,,,,
+94,,,,
+95,Dictionary,,,VOCABULARY
+96,,,,
+97,>body,( xt -- addr ),addr is the data-field address corresponding to execution token xt,forth
+98,>flags,( xt -- flags ),"returns the flags of the word corresponding to execution token xt
+contains 1 if an immediate word, else contains 0",forth
+99,>link,( xt -- addr ) ,addr is the link-field address corresponding to execution token xt,forth
+100,>link&,( xt -- addr ),used internally  by >link,forth
+101,>name,( xt -- addr  n | 0 ),"convert execution token xt to a name located at addr with n characters, else return 0 if not possible",forth
+102,FIND,( addr n -- xt | 0 ),"using the counted string at addr with n characters, look a word up in the current dictionary stack, returning the execution token xt if found, else 0",forth
+103,forget,"( ""name"" -- )","find the word that follows in the input stream; if it exists in the current dictionary, remove it and all words that followed it from the dictionary and the corresponding compiled code",forth
+104,here,( -- addr ),"returns the address of the first free location above the code dictionary, where new words are compiled",forth
+105,only,( -- ),"Reset context stack to one item, the FORTH dictionary",forth
+106,transfer,"( ""name"" -- )","Move a word from its current dictionary to the current vocabulary. Useful for ""hiding"" helper words that aren't useful in normal programming",forth
+107,transfer{,( -- ),Move all the words that follow in the input stream up until a terminating } to the current vocabulary. All the words must have been defined beforehand,forth
+108,,,,
+109,,,,
+110,Exceptions,,,VOCABULARY
+111,,,,
+112,assert,( f -- ),"if flag f=true, execute throw",forth
+113,catch,( ca -- err# | 0 ),sets up a local error frame on the return stack and executes the word referenced by the execution word ca. It returns a non-zero error code or a zero if no error occurred,forth
+114,handler,( -- addr ),holds the return stack pointer for error handling - zero if no error occurred.,forth
+115,throw,( err# -- err# ),throws the system back to 'catch' so that the error condition can be processed. 'Catch' is backtracked by restoring the return stack from the pointer stored in 'handler' and popping the old handler and SP off the error frame on the return stack.,forth
+116,,,,
+117,,,,
+118,Files,,,VOCABULARY
+,,,,
+121,CLOSE-FILE,( fh -- ior ) ior= Input Output Result,Close the file identified by fileid. ior is the implementation-defined I/O result code.,forth
+122,CREATE-FILE,( a n mode -- fh ior )  ( c-addr u mode-- fh ior )  ,"Create the file named in the character string specified by c-addr and u, and open it with file access method.   If a file with the same name already exists, recreate it as an empty file. see B901 Typical use:
+ : Test ( --fh)  s"" /spiffs/myprogram.fs""   R/W  CREATE-FILE  IF ."" CREATE-FILE FAILED""  -1 throw THEN   ;  ",forth
+123,DELETE-FILE,( a n -- ior ) ( c-addr u -- ior ),Delete the file named in the character string specified by c-addr u. ior is the implementation-defined I/O result code.,forth
+124,FILE-POSITION,( fh -- n ior ) ( fileid -- ud ior ),ud is the current file position for the file identified by fileid. ior is the implementation-defined I/O result code. ud is undefined if ior is non-zero.,forth
+125,FILE-SIZE,( fh -- n ior ) ( fileid -- ud ior ),"ud is the size, in characters, of the file identified by fileid. ior is the implementation-defined I/O result code. This operation does not affect the value returned by FILE- POSITION. ud is undefined if ior is non-zero.",forth
+126,FLUSH-FILE,( fileid -- ior ),"Attempt to force any buffered information written to the file referred to by fileid to be written to mass storage, and the size information for the file to be recorded in the storage directory if changed. If the operation is successful, ior is zero. Otherwise, it is an implementation-defined I/O result code.",forth
+127,include,"( ""name"" -- )","Using the next word in the input stream, name ...",forth
+128,INCLUDED,"( a n -- ) ( i * x c-addr u -- j * x ) Typical use: ... S"" filename"" INCLUDED ... ","Remove c-addr u from the stack. Save the current input source specification, including the current value of SOURCE-ID. Open the file specified by c-addr u, store the resulting fileid in SOURCE-ID, and make it the input source. Store zero in BLK. Other stack effects are due to the words included.",forth
+129,OPEN-FILE,"( a n mode -- fh ior )  Typical use:
+   : Test ( --fh)  s"" /spiffs/myprogram.fs""   R/W  OPEN-FILE  IF ."" OPEN-FILE FAILED""  -1 throw THEN   ;","Open the file named in the character string specified by c-addr u, with file access method indicated by fam. The meaning of values of fam is implementation defined.
+
+If the file is successfully opened, ior is zero, fileid is its identifier, and the file has been positioned to the start of the file.
+
+Otherwise, ior is the implementation-defined I/O result code and fileid is undefined.",forth
+,,,,
+130,R/O,( -- mode ),read only mode - used with OPEN-FILE,forth
+131,R/W,( -- mode ),read write mode - used with OPEN-FILE,forth
+142,W/O,( -- mode ),write only mode - used with OPEN-FILE,forth
+120,BIN,( mode1 -- mode2 ),"Modify the implementation-defined file access method mode1 to additionally select a ""binary"", i.e., not line oriented, file access method, giving access method mode2.",forth
+132,READ-FILE,( a n fh -- n ior )         ( c-addr u1 fileid -- u2 ior ),"Read u1 consecutive characters to c-addr from the current position of the file identified by fileid.
+
+If u1 characters are read without an exception, ior is zero and u2 is equal to u1.
+
+If the end of the file is reached before u1 characters are read, ior is zero and u2 is the number of characters actually read.
+
+If the operation is initiated when the value returned by FILE-POSITION is equal to the value returned by FILE-SIZE for the file identified by fileid, ior is zero and u2 is zero.
+
+If an exception occurs, ior is the implementation-defined I/O result code, and u2 is the number of characters transferred to c-addr without an exception.",forth
+133,remember,( -- ),Save a snapshot to the default file (./myforth or /spiffs/myforth on ESP32),forth
+134,REPOSITION-FILE,( n fh -- ior )   ( ud fileid -- ior ),"Reposition the file identified by fileid to ud. ior is the implementation-defined I/O result code. An ambiguous condition exists if the file is positioned outside the file boundaries.
+At the conclusion of the operation, FILE-POSITION returns the value ud.",forth
+135,reset,( -- ),Reset removes the custom message,forth
+136,RESET ,( -- ), Delete the default filename.,forth
+137,RESIZE-FILE,( ud fileid -- ior ),"Set the size of the file identified by fileid to ud. ior is the implementation-defined I/O result code.
+If the resultant file is larger than the file before the operation, the portion of the file added as a result of the operation might not have been written.
+At the conclusion of the operation, FILE-SIZE returns the value ud and FILE- POSITION returns an unspecified value.",forth
+138,restore,"( ""name"" -- )",Restore a snapshot from a file,forth
+139,revive,( -- ),Restore the default filename,forth
+140,save,"( ""name"" -- )",Saves a snapshot of the current dictionary to a file,forth
+141,startup:,"( ""name"" -- )","Save a snapshot to the default file arranging for ""name"" to be run on startup SEE EXAMPLE B743",forth
+143,WRITE-FILE,( a n fh -- ior )                         ( c-addr u fileid -- ior ),"Write u characters from c-addr to the file identified by fileid starting at its current position. ior is the implementation-defined I/O result code.
+At the conclusion of the operation, FILE-POSITION returns the next file position after the last character written to the file, and FILE-SIZE returns a value greater than or equal to the value returned by FILE-POSITION.",forth
+144,,,,
+145,,,,
+146,Input / Output,,,VOCABULARY
+147,,,,
+148,adc,( pin# -- n ),alias for analogRead - see example below,forth
+149,analogRead,( pin -- n ),Analog read from 0-4095,forth
+150,dacWrite,( pin 0-255 -- ),"Write to DAC (pin 25, 26)",forth
+151,digitalRead,( pin -- value ),Read GPIO state - see example below,forth
+152,digitalWrite,( pin value -- ),Set GPIO pin state,forth
+153,pin,( value pin# -- ),"Set GPIO pin value e.g.
+HIGH 3 pin LOW 3 pin - see example below",forth
+154,pinMode,( pin mode -- ),"Set GPIO pin mode e.g.
+14 input pinMode    \ set pin 14 as input",forth
+155,pulseIn,( pin value usec -- usec/0 ),Wait for a pulse,forth
+156,tone,( channel freq ),Write tone frequency,forth
+157,,,,
+158,,,,
+159,Interrupts,,,VOCABULARY
+160,,,,
+161,timer_isr_register,( group timer xt arg ret -- 0/err ),,forth
+162,esp_intr_alloc,( source flags xt args handle* -- 0/err ),,interrupts
+163,ESP_INTR_FLAG_DEFAULT,( -- 0 ),Default handler allows per pin routing,interrupts
+164,ESP_INTR_FLAG_EDGE,( -- 512 ),gpio_install_isr_service flag,interrupts
+165,ESP_INTR_FLAG_INTRDISABLED,( -- 2048 ),gpio_install_isr_service flag,interrupts
+166,ESP_INTR_FLAG_IRAM,( -- 1024 ),gpio_install_isr_service flag,interrupts
+167,ESP_INTR_FLAG_LEVELn,( n1 -- n2 ),"n2 = 2 to the power n1, gpio_install_isr_service",interrupts
+168,ESP_INTR_FLAG_NMI,( -- 128 ),gpio_install_isr_service flag,interrupts
+169,ESP_INTR_FLAG_SHARED,( -- 256 ),gpio_install_isr_service flag,interrupts
+170,esp_intr_alloc,,,interrupts
+171,esp_intr_free,( handle -- 0/err ),,interrupts
+172,gpio_config,( gpio_config_t* -- 0/err ),"GPIO common configuration. Configure GPIO’s Mode,pull-up,PullDown,IntrType from a GPIO configure structure gpio_config_t",interrupts
+173,gpio_deep_sleep_hold_dis,( -- ),Disable all digital gpio pad hold function during Deep-sleep,interrupts
+174,gpio_deep_sleep_hold_en,( -- ),"Enable all digital gpio pad hold function during Deep-sleep. When the chip is in Deep-sleep mode, all digital gpio will hold the state before sleep, and when the chip is woken up, the status of digital gpio will not be held. Note that the pad hold feature only works when the chip is in Deep-sleep mode, when not in sleep mode, the digital gpio state can be changed even you have called this function. Power down or call gpio_hold_dis will disable this function, otherwise, the digital gpio hold feature works as long as the chip enter Deep-sleep",interrupts
+175,gpio_get_drive_capability,( pin cap* -- 0/err ),,interrupts
+176,gpio_get_level,( pin -- level ),GPIO get input level of 'pin',interrupts
+177,gpio_hold_dis,( pin -- 0/err ),,interrupts
+178,gpio_hold_en,( pin -- 0/err ),,interrupts
+179,gpio_install_isr_service,( a -- ),"a = combination of gpio_install_isr_service flags - Install the driver’s GPIO ISR handler service, which allows per-pin GPIO interrupt handlers",interrupts
+180,#GPIO_INTR_ANYEDGE,( -- 3 ),"constant - set interrupt for either +ve or -ve edge
+e.g. 2 #GPIO_INTR_ANYEDGE gpio_set_intr_type - see example below",interrupts
+181,#GPIO_INTR_DISABLE,( --  0 ),"constant - disable interrupt
+e.g. 2 #GPIO_INTR_DISABLE gpio_set_intr_type",interrupts
+182,gpio_intr_disable,( pin -- 0/err ),Disable GPIO module interrupt signal for 'pin',interrupts
+183,gpio_intr_enable,( pin -- 0/err ),Enable GPIO module interrupt signal for'pin',interrupts
+184,#GPIO_INTR_HIGH_LEVEL,( -- 5 ),constant - e.g. 2 #GPIO_INTR_HIGH_LEVEL gpio_set_intr_type,interrupts
+185,#GPIO_INTR_LOW_LEVEL,( -- 4 ),constant - e.g. 2 #GPIO_INTR_LOW_LEVEL gpio_set_intr_type,interrupts
+186,#GPIO_INTR_NEGEDGE,( -- 2 ),"constant - set interrupt on -ve edge
+e.g. 2 #GPIO_INTR_NEGEDGE gpio_set_intr_type",interrupts
+187,#GPIO_INTR_POSEDGE,( -- 1 ),"constant - set interrupt on +ve edge
+e.g. 2 #GPIO_INTR_POSEDGE gpio_set_intr_type",interrupts
+188,gpio_isr_handler_add,pin xt 0 -- 0/err ),"Having already set up the interrupt type, attach a new entry to the interrupt list, so that when the entry fires, the execution token 'xt' is called. If adding this entry was successful return true, else return an error code e.g.
+2 ' myinterrupthandlerword 0 gpio_isr_handler_add",interrupts
+189,gpio_isr_handler_remove,( pin -- 0/err ),Remove ISR handler for the corresponding GPIO pin,interrupts
+190,gpio_pulldown_dis,( pin -- 0/err ),Disbale pull down load on 'pin',interrupts
+191,gpio_pulldown_en,( pin -- 0/err ),Enable pull down load on 'pin',interrupts
+192,gpio_pullup_dis,( pin -- 0/err ),Disable pull up load on 'pin',interrupts
+193,gpio_pullup_en,( pin -- 0/err ),Enable pull up load on 'pin',interrupts
+194,gpio_reset_pin,( pin -- 0/err ),"Reset a gpio to default state (select gpio function, enable pullup and disable input and output)",interrupts
+195,gpio_set_direction,( pin mode -- 0/err ),Set gpio signal direction of 'pin',interrupts
+196,gpio_set_drive_capability,( pin cap -- 0/err ),Set GPIO pad 'pin' drive capability or strength 'cap',interrupts
+197,gpio_set_intr_type,( pin type -- 0/err ),"Set the required i/o pin to the interrupt type, returning true if successful, else an error code",interrupts
+198,gpio_set_level,( pin level -- 0/err ),GPIO set the output level pf 'pin' =1 or 0,interrupts
+199,gpio_set_pull_mode,( pin mode -- 0/err ),Configure GPIO 'pin' pull-up/pull-down resistors by means of 'mode'. GPIO 34-39 don't have this facility,interrupts
+200,gpio_uninstall_isr_service,( -- ),"Uninstall the driver’s GPIO ISR service, freeing related resources",interrupts
+201,gpio_wakeup_disable,( pin -- 0/err ),Disable GPIO wake-up function on 'pin',interrupts
+202,gpio_wakeup_enable,( pin type -- 0/err ),Enable GPIO wake-up function on 'pin' - only type #GPIO_INTR_LOW_LEVEL or #GPIO_INTR_HIGH_LEVEL can be used,interrupts
+203,pinchange,( xt pin -- ),"Call xt when pin changes e.g. 
+17 input pinMode
+: test ."" pinvalue: "" 17 digitalRead . cr ;
+' test 17 pinchange",interrupts
+204,,,,
+205,,,,
+206,LED control - pulse width modulation,,,VOCABULARY
+207,,,,
+208,duty,( channel duty -- ),"like ledcWrite, with bounds check and scaling i.e.
+: duty 255 min 8191 255 */ ledcWrite ;",forth
+209,freq,( channel freq -- ),"like ledcSetup, with scaling i.e.
+: freq ( n n -- ) 1000 * 13 ledcSetup drop ;",forth
+210,ledcAttachPin,( pin channel -- ),Assigns which 'channel' (0-15) of the PWM engine the 'pin' is connected to,ledc
+211,ledcDetachPin,( pin -- ),Detaches #pin' from the pwm engine,ledc
+212,ledcRead,( channel -- n ),Read the current dutycycle setting for 'channel',ledc
+213,ledcReadFreq,( channel -- freq ),"Get frequency (x 1,000,000)",ledc
+214,ledcSetup,( channel freq resolution -- freq ),Setup one of the 16 pwm channels (0-15) at frequency=freq*1000 Hz  with 'resolution',ledc
+215,ledcWrite,( channel duty -- ),Set 'channel'  (0-15) at 'duty' level (0-100),ledc
+216,ledcWriteNote,( channel note octave -- freq ),"channel 0-12, octave 0-8, note 0-12
+(note is as per the western musical scale)",ledc
+217,ledcWriteTone,( channel freq -- n ),"Write tone frequency (x 1000) e.g.
+23 0 ledcAttachPin    \ attach GPIO23 to channel 0
+0 1000000 ledc WriteTone drop \ o/p 1kHz tine",ledc
+218,,,,
+219,,,,
+220,Logic,,,VOCABULARY
+221,,,,
+222,AND,( n1 n2 – n3 ),n3 = n1 AND n2 (bit wise),forth
+223,invert,,,forth
+224,LSHIFT,( x1 u -- x2 ),"Perform a logical left shift of u bit-places on x1, giving x2. Put zeroes into the least significant bits vacated by the shift. An ambiguous condition exists if u is greater than or equal to the number of bits in a cell.",forth
+225,OR,( n1 n2 – n3 ),n3 = n1 OR n2 ( bit-wise ),forth
+226,RSHIFT,( x1 u -- x2 ),"Perform a logical right shift of u bit-places on x1, giving x2. Put zeroes into the most significant bits vacated by the shift. An ambiguous condition exists if u is greater than or equal to the number of bits in a cell.",forth
+227,XOR,( n1 n2 -- n3 ),n3 = n1 XOR n2 ( bit-wise),forth
+228,,,,
+229,,,,
+230,Looping,,,VOCABULARY
+231,,,,
+232,?do,( n1 n2 -- ),"e.g. : test ?do i . loop ;
+if n1 = n2, then inside ?do .. loop is NOT executed
+if n1 <> n2, it behaves like do .. loop",forth
+233,+loop,( n -- ),e.g. : +looptest 20 0 do i . 2 +loop ; results when run in 0 2 4 6 8 10 12 14 16 18 being displayed,forth
+234,again,( -- ),begin <forth words> again,forth
+235,begin,( -- ),"begin <forth words> until
+",forth
+236,do,( n1 n2 -- ),": test 10 4 do i . loop ; produces
+4 5 6 7 8 9 on the display",forth
+237,EXIT,( -- ),"Return control to the calling definition. Before executing EXIT within a do-loop, a program shall discard the loop-control parameters by executing 'unloop'",forth
+238,for,( n -- ),": test 10 for i . next ; 
+produces 10 9 8 7 6 5 4 3 2 1 0 on display
+n.b. n will make the for loop run n+1 times by design",forth
+239,i,( -- n ),Place current loop index on top of stack,forth
+240,j,( -- n ),Place index count for next outer lop top of stack,forth
+241,leave,( -- ),Force do loop termination,forth
+242,loop,( -- ),part of do <forth words> loop construct,forth
+243,next,( -- ),part of for <forth words> next construct,forth
+244,repeat,( -- ),part of begin <forth words that leave f on the stack> while < more forth words> repeat,forth
+245,unloop,( -- ),"Discard the loop-control parameters for the current nesting level e.g. Typical use:
+: unlooptest <limit> <first> DO  ... test IF ... UNLOOP EXIT THEN ... LOOP ... ; - see example below",forth
+246,until,( f -- ),begin <forth words that leave f on stack> until,forth
+247,while,( f -- ),part of begin <forth words that leave f on the stack> while < more forth words> repeat,forth
+248,,,,
+249,,,,
+250,Maths,,,VOCABULARY
+251,,,,
+252,-,( n1 n2 -- n3 ),n3 = n1 - n2,forth
+253,*,( n1 n2 -- n3 ),n3 = n1 * n2,forth
+254,*/,( n1 n2 n3 -- n4 ),Multiply n1 by n2 producing the intermediate double-cell result d. Divide d by n3 giving the single-cell quotient n4,forth
+255,*/MOD,( n1 n2 -n3 -- n4 n5 ),Multiply n1 by n2 producing the intermediate double-cell result d. Divide d by n3 producing the single-cell remainder n4 and the single-cell quotient n5,forth
+256,/,( n1 n2 -- n3 ),"Divide n1 by n2, giving the single-cell quotient n3",forth
+257,/mod,( n1 n2 -- n3 n4 ),"Divide n1 by n2, giving the single-cell remainder n3 and the single-cell quotient n4",forth
+258,+,( n1 n2 -- n3 ),n3 = n1 + n1,forth
+259,2*,( n1 -- n2 ),n2 = n1 * 2,forth
+260,2/,( n1 -- n2 ),n2 = n1 / 2,forth
+261,4*,( n1 -- n2 ),n2 = n1 * 4,forth
+262,4/,( n1 -- n2 ),n2 = n1 / 4,forth
+263,abs,( n1 -- n2 ),n2 is the absolute value of n1,forth
+264,max,( n1 n2 -- n3 ),n3 = the larger of n1 or n2,forth
+265,min,( n1 n2 – n3 ),n3 = the smaller of n1 or n2,forth
+266,mod,( n1 n2 – n3 ),"Divide n1 by n2, giving the single-cell remainder n3",forth
+267,negate,( n – -n ),Two's complement of top of stack,forth
+268,U/MOD,( u1 u2 -- rem quot ),"Unsigned division, leaving remainder and quotient",forth
+269,1+,( n-- n+1 ),increment value on the stack by 1 ,forth
+270,1-,( n-- n1- ),decrement value on the stack by 1 ,forth
+271,,,,
+272,Memory,,,VOCABULARY
+273,,,,
+274,!,( n addr --> ),store x at addr,forth
+275,@,( addr --n ),Retrieves the integer value n stored at address addr,forth
+276,+!,( n addr -- ),Increments the content of a variable by the value n,forth
+277,+to,"( n ""valuename"" -- )","Adds n to the value whose name follows in the input stream e.g.
+2 value myvalue   \ define a value called myvalue = 2
+3  +to myvalue     \ myvalue now equals 5",forth
+278,to,( n -- ),"Change a value e.g.
+10 value myvalue  \ set up myvalue = 10
+5 to myvalue         \ myvalue now returns 5",forth
+279,2!,( n1 n2  addr --> ),"store n1, n2 as a 64 bit value at addr",forth
+280,2@,( addr --n1 n2 ),"read n1, n2 as a 64 bit value from addr",forth
+281,C!,( c addr --> ),store byte c at addr,forth
+282,C@,( addr --c ),read byte c from addr,forth
+283,allocate,( n -- a ior ),"reserve a memory chunk of n bytes, returns the start address, ior=0 (No error) if successful, else   -1 =ERROR see also free and resize",forth
+284,cell/,( n1 -- n2 ),n2 = n1 / 4,forth
+285,cell+,( n1 -- n2 ),n2 = n1 + 4,forth
+286,cells,( -- 4 ),"constant, returns 4 - the number of bytes ina cell",forth
+287,cmove,( addr1 addr2 n -- ),"move n bytes from addr1 to addr2, starting at addr1 and proceeding toward high memory",forth
+288,cmove>,( addr1 addr2 n -- ),"copy n bytes from memory starting at c-addr1 to that starting at c-addr2, proceeding from higher addresses to lower addresses",forth
+289,fill,( addr n c ),fill memory from addr for n bytes with byte c,forth
+290,free,( a --  ),free memory previously reserved allocate - see also resize,forth
+291,L!,( n addr -- ),write n to addr in real ESP32 memory space ,forth
+292,L@,( addr --n ),read n from real ESP32 memory space,forth
+293,resize,( a n -- a ior ),"ior=0 (NO Error)  if a memory chunk reserved with MALLOC resized to n bytes correctly, else ior=-1 in case of ERROR - see also allocate and free",forth
+294,,,,
+295,,,,
+296,Number I/O,,,VOCABULARY
+297,,,,
+298,?,( addr -- ),display value at addr,forth
+299,.,( n – ),display top of stack,forth
+300,#,( ud1 -- ud2 ),Convert next digit of ud1 and HOLD it,forth
+301,#>,( ud -- addr n ),Drop ud and prepare string for TYPE,forth
+302,#s,( ud -- 0 0 ),Convert and HOLD all remaining significant digits,forth
+303,<#,( --  ),Begin a formatted number conversion,forth
+304,base,( -- addr ),Stores the current number display base - defaults to 10 decimal,forth
+305,binary,( – ),Set current number base to 2 decimal,forth
+306,decimal,( – ),Set current number base to 10 decimal,forth
+307,extract,( n base -- n c ),extracts the least significant digit from a number n. n is divided by the radix in BASE and returned on the stack,forth
+308,hex,( – ),Set current number base to 16 decimal,forth
+309,hold,( c -- ),Insert character into formatted string,forth
+310,n.,( n -- ),"display n in decimal, regardless of current number base",forth
+311,octal,( -- ),Set current number base to 8 decimal,forth
+312,pad,( -- addr ),returns the address of the text buffer where numbers are constructed and text strings are stored temporarily,forth
+313,sign,(n ud -- ud ),HOLD minus sign only if n is negative,forth
+314,u.,( n -- ),display n in the current number base,forth
+315,,,,
+316,,,,
+317,,,,
+318,Registers,,,VOCABULARY
+319,,,,
+320,m!,,,registers
+321,m@,,,registers
+322,,,,
+323,,,,
+324,SD card,,,VOCABULARY
+326,These words allow use of an SDcard over SPI.,,,
+327,SD.begin ,( -- ok ),"uses all the defaults ""/sd"" etc.",SD 
+328,SD.beginDefaults,"( -- sspin SPIClass frequency mountpointsz maxfiles format_if_empty )
+(    SS          SPI        4000000          ""/sd""                5                  false          )",,SD 
+330,SD.beginFull,( sspin    SPIClass  frequency  mountpoint     maxfiles format_if_empty   --   ok ),,SD 
+331,SD.end ,( -- ),,SD 
+332,SD.cardType ,( -- n ),,SD 
+333,SD.totalBytes ,( -- n ),,SD 
+334,SD.usedBytes ,( -- n ),,SD 
+335,,,,
+336,SD_MMC card,,,VOCABULARY
+337,,,,
+338,SD_MMC.begin,( mount mode1bit ),default mode1bit=false,SD_MMC
+339,SD_MMC.cardType,( -- n ),,SD_MMC
+340,SD_MMC.end,( -- ),,SD_MMC
+341,SD_MMC.totalBytes,( -- n ),,SD_MMC
+342,SD_MMC.usedBytes,( -- n ),,SD_MMC
+343,,,,
+344,,,,
+345,Serial communication,,,
+346,,,,
+347,Serial.available,( -- f ),Get the number of bytes (characters) available for reading from the serial port. This is data that’s already arrived and stored in the serial receive buffer (which holds 64 bytes),serial
+348,Serial.begin,( baud -- ),Start serial port. Sets the data rate in bits per second (baud) for serial data transmission,serial
+349,Serial.end,( -- ),"Disables serial communication, allowing the RX and TX pins to be used for general input and output. To re-enable serial communication, call Serial.begin",serial
+350,Serial.flush,( -- ),Waits for the transmission of outgoing serial data to complete,serial
+351,Serial.readBytes,( a length -- n ),"Serial.readBytes reads characters from the serial port into a buffer, address a. The function terminates if the determined length has been read. The number of bytes, n is returned",serial
+352,Serial.write,( a n -- n ),Writes n bytes of data to the serial port from buffer at address a,serial
+,,,,
+352,the same  SERIAL words are available for SERIAL PORT2 ,,,serial
+,"for example Serial2.write, Serial2.Begin, Serial2.readbytes, Serial2.flush  etc etc...",,,
+354,,,,
+355,Sockets,,N.B. These words are for v7.0.7.2 onwards,VOCABULARY
+356,,,,
+357,->addr@,( a -- n ),get big-endian address from sockaddr,sockets
+,->addr!,( n a -- ),set big-endian address in sockaddr,
+358,->h_addr,,,sockets
+359,->port!,( n a -- ),set port in sockaddr,sockets
+360,->port@,( a -- n ),get port from sockaddr,sockets
+361,AF_INET,( -- 2 ),"constant, value 2",sockets
+362,bind,( sock addr addrlen -- 0/err ),Bind a name to a socket,sockets
+363,"bs,",( n -- ),,sockets
+364,connect,( sock addr addrlen -- 0/err ),,sockets
+365,errno,( -- n ),Retrieves the last error generated by a socket,sockets
+366,gethostbyname,( hostnamez -- hostent/0 ),,sockets
+367,ip.,( n -- ),Print address as x.y.z.w IP address.,sockets
+,ip#,,,sockets
+,"l,",( n -- ),,sockets
+,listen,( sock connections -- 0/err ),Waits for a connection on a socket,sockets
+,poll,( pollfds n timeout -- fd/err ),,sockets
+,recv,( sock a n flags -- n/err ),,sockets
+,recvfrom,( sock a n flags addr addrlen -- n/err ),,sockets
+368,recvmsg,( sock msg flags -- n/err ),,sockets
+,"s,",( n -- ),,sockets
+,select,( numfds readfds writefds errfds timeout -- fd/err ),,sockets
+,send,( sock a n flags -- n/err ),,sockets
+,sendmsg,( sock msg flags -- n/err ),,sockets
+,sendto,( sock a n flags addr addrlen -- n/err ),,sockets
+,setsockopt,( sock level optname optval optlen -- 0/err ),"Sets the current value for a socket option associated with a socket of any type, in any state",sockets
+,sizeof(sockaddr_in),( -- 16 ),"constant, value 16",sockets
+,SO_REUSEADDR,( -- 2 ),"constant, value 2",sockets
+,SOCK_DGRAM,,constant,sockets
+,SOCK_RAW,,constant,sockets
+,SOCK_STREAM,,"Define socket protocal type: SOCK_STREAM
+constant, value 1",sockets
+,sockaccept,( sock addr addrlen -- sock/err ),N.B this varies from bsd sockets,sockets
+,sockaddr,"( ""name"" -- )","Create socket address structure e.g.
+\ define socket address httpd-port 
+sockaddr httpd-port
+\ define socket address client
+sockaddr client ",sockets
+,socket,( family type protocol -- n4 ),"Initialise socket, family = protocol used, type = type of service, protocol = protocol of the desired service",sockets
+,SOL_SOCKET,( -- 1 ),"constant, value 1",sockets
+369,,,,
+,,,,
+370,Serial Peripheral Interface Flash File System,,,VOCABULARY
+371,,,,
+372,SPIFFS.begin,( format-on-fail path-z max-files -- f ),"Mounts file system. It must be called before any other SPIFFS words are used. Returns true if file system was mounted successfully, false otherwise. If format-on-fail is true the 'disk' will be formatted",SPI filesystem
+373,SPIFFS.end,( -- ),Unmounts the flash memory file system,SPI filesystem
+374,SPIFFS.format,( -- f ),Format the flash memory 'disk'. returns true if successful,SPI filesystem
+375,SPIFFS.totalBytes,( -- n ),Returns the total capacity of the flash memory 'disk',SPI filesystem
+376,SPIFFS.usedBytes,( -- n ),Returns the total space occupied by flash memory files,SPI filesystem
+377,,,,
+378,,,,
+379,Stack functions,,,VOCABULARY
+380,,,,
+381,-rot,( x1 x2 x3 -- x2 x3 x1),rotate 3rd cell to top,forth
+382,>R,( n – ),move n to the return stack,forth
+383,2drop,( n1 n2 – ),discard the top of stack,forth
+384,2dup,( n1 n2 – n1 n2 n1 n2),duplicate the top two items on the data stack,forth
+385,depth,(  – n),"return the data stack depth on the top of stack e.g.
+3 2 1 depth displays 3 2 1 3",forth
+386,DROP,( n – ),discard the top of stack,forth
+387,DUP,( n – n n ),duplicate the top of stack,forth
+388,nip,( n1 n2 -- n2 ),remove the 2nd item on the data stack,forth
+389,?DUP,( x -- 0 | x x ),Duplicate x if it is non-zero.,
+390,OVER,( n1 n2 -- n1 n2 n1 ),duplicate 2nd item on the data stack,forth
+391,R@,( -- n ),copy the top of the return stack to the top of data stack,forth
+392,R>,( – n ),Move top of return stack to data stack,forth
+393,rdrop,( -- ),drop the top of the return stack,forth
+394,rot,( n1 n2 n3 – n2 n3 n1 ),rotate 3rd cell to top,forth
+395,RP!,( addr -- ),set the return stack pointer,forth
+396,RP@,( -- addr ),read the return stack pointer,forth
+397,rp0,( -- addr ),constant - the initial value of the return stack pointer at switch-on,forth
+398,SP!,( addr -- ),Set the data stack pointer,forth
+399,SP@,( -- addr ),Read the data stack pointer,forth
+400,sp0,( -- n ),constant - the initial value of the data stack pointer at switch-on,forth
+401,SWAP,( n1 n2 – n2 n1 ),swap the top two data stack entries,forth
+402,,,,
+403,,,,
+404,Streams,,,VOCABULARY
+405,,,,
+406,>offset,,,streams
+407,>read,,,streams
+408,>stream,,,streams
+409,>write,,,streams
+410,ch>stream,,,streams
+411,empty?,,,streams
+412,full?,,,streams
+413,stream,"( n ""name"" -- )","define a stream, size n, using the next word in the input stream as the name e.g. 200 stream myinputstream 20000 stream myoutputstream",streams
+414,stream#,,,streams
+415,stream>,,,streams
+416,stream>ch,,,streams
+417,wait-read,,,streams
+418,wait-write,,,streams
+419,,,,
+420,,,,
+421,String functions,,,VOCABULARY
+422,,,,
+423,[char],( -- ),"compile the first letter of the following word in the definition e.g. : my-char [char] ALPHABET emit char emit ;
+executing my-char fred will display:- Af",forth
+424,$place,( addr cnt -- ),,forth
+425,"r""","( ""string"" -- a n )",Creates a temporary counted string,forth
+426,r|,( string| -- a n ),Creates a temporary counted string ending with | - see the example below that creates a stand alone program,forth
+427,"s""",( -- addr cnt ),"creates a string until a terminating "". Leaves the string address addr and the character count cnt on the stack e.g. s"" Hello Bob""",forth
+428,S>NUMBER?,( addr cnt -- n f=true | f=false ),"converts the counted ascii string stored at addr to number n with f=true, else just returns f=0, no n",forth
+429,s>z,( a n -- z ),Convert a counted string string to null terminated string,forth
+430,startswith?,( addr1 n1 addr2 n2 -- f ),"f=true if string at addr1 starts with string at addr2, else f=false",forth
+431,str,( n -- addr cnt ),convert n to a counted string,forth
+432,str=,( addr1 n1 addr2 n2 -- f ),"f=true if the two counted strings are equal, else f=false",forth
+433,"z""","( ""string"" -- addr )",Creates a null terminated string on the heap at addr,forth
+434,z>s,( addr -- addr n ),Convert a null terminated string at addr to a counted string,forth
+435,,,,
+436,,,,
+437,System,,,VOCABULARY
+438,,,,
+439,#tib,( -- addr ),variable,forth
+440,>in,( -- addr ),variable,forth
+441,1,( -- -1 ),constant -1 left on the data stack,forth
+442,bl,( -- 32 ),returns the value of the SPACE char,forth
+443,bye,( -- ),"deferred word, defaults to esp32-bye",forth
+444,CELL,( -- 4 ),returns the number of bytes per standard forth number - 32 bits,forth
+445,current,( -- addr ),points to a vocabulary thread to which new definitions are to be added,forth
+446,echo,( -- addr ),"All input stream is echoed on output stream if echo = -1, else  only partial echo ( --> ok and errors) if set 0",forth
+447,evaluate,( addr cnt -- ),"evaluate the counted string at addr, as if typed in at the command line ",forth
+448,EXECUTE,( xt -- ),Execute the word whose execution token is top of stack,forth
+449,HIGH,( -- 1 ),"Logic high is represented by 1 e.g.
+HIGH 1 pin",forth
+450,hld,( -- adr ),holds a pointer in building a numeric output string,forth
+451,INPUT,( -- 1 ),"constant used to set a pin as an input e.g.
+2 INPUT pinMode",forth
+452,LED,( -- 2 ),Some ESP32 modules have an LED fitted on GPIO pin 2,forth
+453,LOW,( -- 0 ),"Logic low is represented by 0 e.g.
+LOW 4 pin",forth
+454,nl,( -- 10 ),the value of the NEWLINE character,forth
+455,OUTPUT,( -- 2 ),"constant used to set a pin as an output e.g.
+4 OUTPUT pinMode",forth
+456,quit,( -- ),"Leave stack intact, but return control to input stream",forth
+457,state,( -- addr ),"system variable, state=true system is interpreting, state=false system is compiling",forth
+458,TERMINATE,( n -- ),Call system exit,forth
+459,,,,
+460,,,,
+461,Tasks - multitasking,,,VOCABULARY
+462,,,,
+463,.tasks,( -- ),List running tasks,tasks
+464,pause,( -- ),yield to other tasks,forth
+465,start-task,( task -- ),Activate a task - see example below,forth
+466,task,"( xt dsz rsz ""name"" -- )","Create a new task, named using the next word in the input stream, with 'dsz' size data stack, and 'rsz' size return stack, execution to start at 'xt' execution token",forth
+467,main-task,,,tasks
+468,task-list,,,tasks
+469,,,,
+470,,,,
+471,Telnet,,,VOCABULARY
+472,,,,
+473,broker,( --),Deferred word - executes broker-connection by default,telnetd
+474,broker-connection,( -- ),Processing loop for the active TELNET link,telnetd
+475,client,,,telnetd
+476,client-len,( -- adr ),variable,telnetd
+477,clientfd,( -- flag ),"value, default to -1",telnetd
+478,connection,,,telnetd
+479,server,( port -- ),Start telnet  server daemon on port - see example below,telnetd
+480,sockfd,( -- flag),"value, default to -1",telnetd
+481,telnet-emit,( c -- ),Emit c character on the active telnet port,telnetd
+482,telnet-emit',,,telnetd
+483,telnet-key,( -- c ),Retrieve a character c from the active telnet port,telnetd
+484,telnet-port,( a n -- ),,telnetd
+485,telnet-type,(adr len -- ),Send a counted string on the active telnet port,telnetd
+486,,,,
+487,,,,
+488,Time / Timers,,,VOCABULARY
+489,,"n= group (0/1)
+x = timer (0/1)
+m = watchdog (0-5)","There are two groups of two timer channels
+
+",
+490,,,,
+491,ms,( n1 --  ),"pause for ""n"" milliseconds.",forth
+492,MS-TICKS,( -- n1 ),Time since start in milliseconds,forth
+493,alarm,( t -- a ),,timers
+494,alarm-enable!,( f t -- ),Alarm enable,timers
+495,alarm-enable@,( t -- f ),Alarm enabled?,timers
+496,autoreload!,( v t -- ),,timers
+497,divider!,( n t -- ),Timer divider 2 - 65535,timers
+498,edgeint!,( f t -- ),Edge trigger,timers
+499,enable!,( v t -- ),Timer enable/disable,timers
+500,increase!,( v t -- ),Timer increasing/decreasing,timers
+501,int-enable!,( f t -- ),,timers
+502,interval,( xt usec t -- ),Setup timer t to call execution token xt after usec - see example below,timers
+503,levelint!,( v t -- ),Level trigger,timers
+504,onalarm,( xt t -- ),Set callback,timers
+505,rerun,( t -- ),Rerun timer t triggering,timers
+506,t>nx,( t -- n x ),"x=1 if  bit0 of t=1, else x=0
+n=1 if bit1 of t=1, else n=0",timers
+507,timer!,( lo hi t -- ),,timers
+508,timer@,( t -- lo hi ),,timers
+509,TIMG_BASE,( -- $3ff5f000 ),constant,timers
+510,TIMGn,,,timers
+511,TIMGn_RTCCALICFG_REG,( n -- a ),,timers
+512,TIMGn_RTCCALICFG1_REG,( n -- a ),,timers
+513,TIMGn_Tx,( n x -- a ),,timers
+514,TIMGn_Tx_INT_CLR_REG,( n -- a ),,timers
+515,TIMGn_Tx_INT_ENA_REG,( n -- a ),,timers
+516,TIMGn_Tx_INT_RAW_REG,( n -- a ),,timers
+517,TIMGn_Tx_INT_ST_REG,( n -- a ),,timers
+518,TIMGn_Tx_WDTCONFIGm_REG,( n m -- a ),,timers
+519,TIMGn_Tx_WDTFEED_REG,( n -- a ),,timers
+520,TIMGn_Tx_WDTWPROTECT_REG,( n -- a ),,timers
+521,TIMGn_TxALARMLOHI_REG,( n x -- a ),,timers
+522,TIMGn_TxCONFIG_REG,( n x -- a ),,timers
+523,TIMGn_TxLOAD_REG,( n x -- a ),,timers
+524,TIMGn_TxLOADLOHI_REG,( n x -- a ),,timers
+525,TIMGn_TxLOHI_REG,( n x -- a ),,timers
+526,TIMGn_TxUPDATE_REG,( n x -- a ),,timers
+527,,,,
+528,,,,
+529,Two Wire Interface / I2C,,,VOCABULARY
+530,,,,
+531,Wire.available,( -- f ),Returns the number of bytes available for retrieval with Wire.read. This should be called on a master device after a call to Wire.requestFrom,Wire
+532,Wire.begin,( -- f ),Initiate the Wire library and join the I2C bus as a master. This should normally be called only once.,Wire
+533,Wire.beginTransmission,( n -- ),"Begin a transmission to the slave device at address n. Subsequently, queue bytes for transmission with the Wire.write function and transmit them by calling Wire.endTransmission",Wire
+534,Wire.busy,( -- f ),,Wire
+535,Wire.endTransmission,( sendstop -- f ),Ends a transmission to a slave device that was begun by Wire.beginTransmission and transmits the bytes that were queued by Wire.write Sends a stop message if sendstop=true,Wire
+536,Wire.flush,( -- ),,Wire
+537,Wire.getClock,( -- frequency ),Read the clock frequency set by Wire.setClock,Wire
+538,Wire.getErrorText,( n -- z ),,Wire
+539,Wire.getTimeout,( -- ms ),,Wire
+540,Wire.lastError,( -- n ),,Wire
+541,Wire.peek,( -- ch ),,Wire
+542,Wire.read,( -- ch ),Reads a byte that was transmitted from a slave device to a master after a call to Wire.requestFrom or was transmitted from a master to a slave,Wire
+543,Wire.readTransmission,( addr a n sendstop acount -- err ),,Wire
+544,Wire.requestFrom,( address quantity sendstop -- n ),Used to request bytes from a slave device. The bytes may then be retrieved with the Wire.available and Wire.read functions. A stop message is sent after the reqyest if sendstop is true,Wire
+545,Wire.setClock,( frequency -- ),"Modifies the clock frequency for I2C communication. I2C slave devices have no minimum working clock frequency, however 100KHz is usually the baseline",Wire
+546,Wire.setTimeout,( ms -- ),Default is 50ms,Wire
+547,Wire.write,( a n -- n ),"Writes data from a slave device in response to a request from a master, or queues bytes for transmission from a master to slave device (in-between calls to Wire.beginTransmission and Wire.endTransmission)",Wire
+548,Wire.writeTransmission,( addr a n sendstop -- err ),,Wire
+549,,,,
+550,,,,
+551,Vectored execution,,,VOCABULARY
+552,,,,
+553,defer,"( ""vectorname"" -- )",Define a deferred execution vector e.g. defer myemit,forth
+554,is,( -- ),Set the vector of a deferred word e.g. ' emit is myemit - sets the deferred word myemit to execute emit when called,forth
+555,,,,
+556,,,,
+557,Vocabulary,,,VOCABULARY
+558,,,,
+559,}transfer,,transfer the words enclosed in curly brackets to the current library e.g. { word1 word2 word3 ... }transfer,forth
+560,also,( -- ),Duplicate the vocabulary at the top of the vocabulary stack,forth
+561,context,( -- a ),an area to specify vocabulary search order - defaults to forth,forth
+562,definitions,( -- ),Make the context vocabulary the current vocabulary,forth
+563,forth,( -- ),Make the forth vocabulary the current vocabulary,forth
+564,internals,,Make the internals vocabulary the current vocabulary,forth
+565,interrupts,,Make the interrupts vocabulary the current vocabulary,forth
+566,ledc,,Make the ledc vocabulary the current vocabulary,forth
+567,registers,( -- ),set the current vocabulary to registers,forth
+568,rtos,,Make the rtos vocabulary the current vocabulary,forth
+569,SD_MMC,,Make the SD_MMC vocabulary the current vocabulary,forth
+570,sealed,( -- ),Alter the last vocabulary defined so it doesn't chain,forth
+571,Serial,,Make the Serial vocabulary the current vocabulary,forth
+572,sockets,,Make the sockets vocabulary the current vocabulary,forth
+573,SPIFFS,,Make the SPIFFS vocabulary the current vocabulary,forth
+574,streams,( -- ),set the current vocabulary to streams,forth
+575,tasks,,make tasks vocabulary the current one  ,forth
+576,telnetd,,Make the telnetdvocabulary the current vocabulary,forth
+577,timers,( --  ),Make the timers vocabulary the current vocabulary,forth
+578,vocabulary,"( ""name"" -- )",Create a vocabulary with the current vocabulary as parent,forth
+579,web-interface,,Make the web-interface vocabulary the current vocabulary,forth
+580,WebServer,,Make the WebServer vocabulary the current vocabulary,forth
+581,webui,( network-z password-z -- ),"login and start webui e.g.
+z"" NETWORK-NAME"" z"" PASSWORD"" webui",forth
+582,WiFi,,Make the WiFi vocabulary the current vocabulary,forth
+583,Wire,( -- ),Make the Wire vocabulary the current vocabulary,forth
+584,previous,( -- ),Drop the vocabulary at the top of the vocabulary stack,forth
+,,,,
+585, ,,,
+586,OLED display,,,VOCABULARY
+587,,,,
+588,#define ENABLE_OLED_SUPPORT,,#define ENABLE_OLED_SUPPORT to activate the lib.,
+589,#  include <Adafruit_GFX.h>,,install in your system the Adafruit libraries,
+590,#  include <Adafruit_SSD1306.h>,,install in your system the Adafruit libraries,
+591, ,,EXAMPLES   see notes below,
+592, OledInit,(  --  ),initialize the display to accept commands,oled
+593, OledDelete ,( n -- a ),,oled
+594, OledBegin ,( n -- a ),initialization,oled
+595, OledHOME ,( n -- a ),send cursor to upper left home position,oled
+596, OledCLS ,( n -- a ),clears the display,oled
+597, OledTextc ,( n -- a ),,oled
+598, OledPrintln ,( n -- a ),print a zero= null terminated string from the stack ,oled
+599, OledNumln ,( n -- a ),print + CR   a number on the stack (int),oled
+600, OledNum ,( n --  ),print a number on the stack (int),oled
+601, OledDisplay ,(  --  ),show the buffer on the OLED display,oled
+602, OO = Oleddisplay,( n -- a ),is an abbreviation of Oleddisplay,oled
+603, OledPrint ,"( z""  ""  addr --  )",print a zero= null terminated string from the stack ,oled
+604, OledInvert ,(  --  ),invert the background & foreground colors,oled
+605, OledTextsize ,( n --  ),,oled
+606, OledSetCursor ,( n --  ),,oled
+607, OledPixel ,( x y C --  ),"draw a pixel    x y coordinates  C= Color , f.e.use 1",oled
+608, OledDrawL ,( x y x2 y2 1  --  ),"draw a line  x y x2 y2 coordinates  C= Color , f.e. 1",oled
+609, OledCirc ,( x y r 1  --  ),draw a circle,oled
+610, OledCircF ,( x y r 1  --  ),draw a circle filled,oled
+611, OledRect ,( x y x2 y2 1  --  ),draw a rectangle,oled
+612, OledRectF ,( x y x2 y2 1  --  ),draw a rectangle filled,oled
+613, OledRectR ,( x y x2 y2 1  --  ),draw a rectangle rounded edges,oled
+614, OledRectRF ,( n -- a ),draw a rectangle rounded edges filled,oled
+615, OledAddr ,( n -- a ),address of I2C device,oled
+616, OledNew ,( n -- a ),,oled
+,,,,
+617,,,,
+618,Web Interface,,,VOCABULARY
+619,,,,
+620,do-serve,,,web-interface
+621,handle-index,,,web-interface
+622,handle-input,,,web-interface
+623,handle1,,,web-interface
+624,index-html,,,web-interface
+625,input-stream,,,web-interface
+626,out-size,,,web-interface
+627,out-string,,,web-interface
+628,output-stream,,,web-interface
+629,serve-key,,,web-interface
+630,serve-type,,,web-interface
+631,webserver,,,web-interface
+632,webserver-task,,,web-interface
+633,,,,
+634,,,,
+635,Web Server,,"Removed in 7.0.6.14, use httpd instead.",VOCABULARY
+636,,,,
+637,WebServer.arg,( z ws -- z ),By name,WebServer
+638,WebServer.argi,( n ws -- z ),By index,WebServer
+639,WebServer.argName,( n ws -- z),By index,WebServer
+640,WebServer.args,By index,Number of args,WebServer
+641,WebServer.begin,( port ws -- ),,WebServer
+642,WebServer.delete,( ws -- ),Delete webserver object,WebServer
+643,WebServer.handleClient,( ws -- ),Handle one client request,WebServer
+644,WebServer.hasArg,( z ws -- f ),By name,WebServer
+645,WebServer.method,( ws -- n ),GET / POST etc.,WebServer
+646,WebServer.new,( port -- ws ),Allocate new webserver object,WebServer
+647,WebServer.on,( path-z xt ws -- ),Set up a web path handle callback,WebServer
+648,WebServer.send,( code mimetype data ws -- ),,WebServer
+649,WebServer.sendContent,( z ws -- ),,WebServer
+650,WebServer.sendHeader,( name-z value-z fist ws -- ),,WebServer
+651,WebServer.setContentLength,( n ws -- ),,WebServer
+652,WebServer.stop,( ws -- ),,WebServer
+653,,,,
+654,,,,
+655,WiFi,,,VOCABULARY
+656,,,,
+657,login,( network-z password-z -- ),"login to wifi only e.g. z"" NETWORK-NAME"" z"" PASSWORD""  login",forth
+658,WIFI_MODE_AP,( -- 2 ),access point mode: stations can connect to the ESP32 e.g. WIFI_MODE_AP WiFi.mode,WiFi
+659,WIFI_MODE_APSTA,( -- 3 ),access point and a station connected to another access point e.g. WIFI_MODE_APSTA WiFi.mode,WiFi
+660,WIFI_MODE_NULL,( -- 0 ),,WiFi
+661,WIFI_MODE_STA,( -- 1 ),station mode: the ESP32 connects to an access point e.g WIFI_MODE_STA WiFi.mode,WiFi
+662,WiFi.begin,( ssid-z password-z -- ),"Initializes the WiFi library's network settings and provides the current status. e.g. z"" mySSID"" z"" myPASSWORD"" WiFi.begin -- see connection-disconnection demo below",WiFi
+663,WiFi.config,( ip dns gateway subnet -- ),"Allows you to configure a static IP address as well as change the DNS, gateway, and subnet addresses on the WiFi shield. Packaged a.b.c.d little-endian",WiFi
+664,WiFi.disconnect,( -- ),Disconnects the WiFi shield from the current network,WiFi
+665,WiFi.getTxPower,( -- powerx4 ),Get power x4,WiFi
+666,WiFi.localIP,( -- ip ),Get local IP,WiFi
+667,WiFi.macAddress,( a -- ),Gets the MAC Address of your ESP32 WiFi port,WiFi
+668,WiFi.mode,( mode -- ),Set WiFi mode - see notes below,WiFi
+669,WiFi.setTxPower,( powerx4 -- ),Set power x4,WiFi
+670,WiFi.status,( -- n ),Returns the connection status - see notes below,WiFi
+671,,,,
+672,,,,
+673,Word definitions,,,VOCABULARY
+674,,,,
+675,",",( n -- ),store a value into the dictionary space,forth
+676,;,(  -- ),"stop compiler, and finish word definition e.g. : gday ."" good day to you"" ;",forth
+677,:,"( ""wordname"" --  )","start compiler mode, creates a word definition e.g. : hi ."" hello world"" ; ",forth
+678,:noname,( – xt ),"Create a word with no name, leaving it's execution token on the stack. The xt would then usually be stored elsewhere from which the word can be executed - see example below",forth
+679,',"( ""wordname"" -- xt )","xt = execution token of the word that follows in the input stream e.g. ' words puts 1073654684 on the stack. Errors if word not found, stopping execution",forth
+680,[,( -- ),stop compiling the input stream and start executing - sets state=true,forth
+681,['],( -- xt ),xt = execution of the word that follows inside a : definition e.g. : COMING   ['] HELLO   'aloha ! ;,forth
+682,],( -- ),"Stop executing and start compiling the input stream, sets state=false",forth
+683,{,( -- ),Mark the start of a local variable block - see example below,forth
+684,align,,,forth
+685,aligned,( addr1 -- addr2 ),"converts an address on the stack to the next higher cell boundary, to help accessing memory by cells",forth
+686,allot,B286,"see ""allocate""   B286",forth
+687,"c,",( c -- ),compile byte c at the next available location in the word definition,forth
+688,constant,"( n ""name"" -- )","create a constant whose name follws in the input stream, value n.   e.g. 12 constant dozen",forth
+689,CREATE,( -- ; -- pfa ),"create an empty dictionary entry <name>, returns the parameter field address when executed",forth
+690,DOES>,( -- addr ),"Used with create in defining new defining words e.g.
+: array ( n -- ; i -- addr ) \ new array type variable
+create cells allot does> swap cells + ;
+10 array baba \ create a 10 cell array named baba
+0 baba puts the 1st element address on the stack
+1 baba puts the 2nd element address on the stack
+10 0 baba ! stores 10 in the 1st element.",forth
+691,IMMEDIATE,,Marks the last defined word as immediate - it will execute immediately if called whilst compiling a word,forth
+692,literal,( n -- ; -- n ),"add top of stack into the word being compiled at the next free memory location. When the word is run, place n top of stack",forth
+693,postpone,"( ""text"" -- )",Skip leading space delimiters. Parse name delimited by a space. Find name. Append the compilation semantics of name to the current definition. Useful when an immediate word needs to be compiled in a word definition instead of immediately executing,forth
+694,recurse,(  -- ),"Allows a word to call itself e.g.
+: FACTORIAL DUP 2 < IF DROP 1 EXIT THEN DUP 1- RECURSE * ;
+so 5 FACTORIAL leaves 120 on the stack",forth
+695,SMUDGE,( -- ),stops the current word being defined being found during a dictionary lookup,forth
+696,value,"( n ""valname"" -- ; -- n )","creates a value, named with the word that follows in the input stream, initialised n",forth
+697,variable,"( ""varname"" -- ; -- addr  )",variable takes the next word in the input stream as the name and reserves space  for a variable,forth
+698,,,,
+699,,,,
+700,Orphan words - yet to be allocated,,,VOCABULARY
+701,,,,
+702,MDNS.begin,( name-z -- ),Start multicast dns,forth
+703,refill,,,forth
+704,vTaskDelete,( task -- ),,rtos
+705,xPortGetCoreID,( -- n ),,rtos
+706,xTaskCreatePinnedToCore,( fn name stack-depth params priority taskout coreid -- ),,rtos
+707,,,,
+708,,,,
+709,FLOATING POINT WORDS --(Requires v7.0.6.5+) ,,,VOCABULARY
+711,Single precision floating-point support is available as a work in progress. ,,,
+712,"While initially left out in the name of minimalism, hardware support for floating-point argues some advantages to limited support.",,,
+713,Floating point is kept on a separate stack.,,,
+714,NOTE: Tasks currently don't correctly support floating point. A single floating point stack is shared by all tasks.,,,
+716,DOFLIT  ,( --- ),Puts a float from the next cell onto float stack.,
+717,FP@ ,( -- a ),,
+718,FP! ,( a -- ),,
+719,SF@ ,( a -- r ),Single precision load,
+720,SF!  ,( r a -- ),Single precision store,
+721,FDUP ,( r -- r r ),,
+722,FNIP ,( ra rb -- rb ),,
+723,FDROP ,( r -- ),,
+724,FOVER ,( ra rb -- ra rb ra ),,
+725,FSWAP ,( ra rb -- rb ra ),,
+726,F0< ,( r -- f ),,
+727,F0= ,( r -- f ),,
+728,F+ ,( r r -- r ),,
+729,F- ,( r r -- r ),,
+730,F* ,( r r -- r ),,
+731,F/ ,( r r -- r ),,
+732,1/F ,( r -- r ),,
+733,S>F ,( n -- r ),,
+734,F>S ,( r -- n ),,
+735,,,,
+736,HIGH LEVEL,,,
+737,,,,
+738,F= ,( r r -- f ),,
+739,F< ,( r r -- f ),,
+740,F> ,( r r -- f ),,
+741,F<= ,( r r -- f ),,
+742,F>= ,( r r -- f ),,
+743,F<> ,( r r -- f ),,
+744,,,,
+745,SFLOAT ,( -- 4 ),,
+746,SFLOATS ,( n -- n*4 ),,
+747,SFLOAT+ ,( a -- a+4 ),,
+748,"SF, ",( r -- ),,
+749,,,,
+750,AFLITERAL ,( r -- ),,
+751,FLITERAL ,( r -- ),,
+752,,,,
+753,FCONSTANT ,"( r ""name"" )",,
+754,FVARIABLE ,"( ""name"" )",,
+755,,,,
+756,PI ,( -- r ),,
+757,,,,
+758,FSQRT ,( r r -- r ),,
+759,,,,
+760,F.S ,( -- ),Print float stack.,
+761,F.  ,( n-- ),"Display, with a trailing space, the top number on the floating-point stack using fixed-point notation:",
+762,,,,
+763,,,,
+764,Serial Bluetooth WORDS --(Requires v7.0.6.5+) ,,,VOCABULARY
+766,,,,
+767,esp_bt_dev_get_address ,( -- a ),addr of 6 byte mac address,bluetooth
+,,,,
+768,Serial Bluetooth,,,
+769,,,,
+770,SerialBT.new    ,( -- bt ),Allocate new BT object,bluetooth
+771,SerialBT.delete   ,( bt -- ),Free BT object,bluetooth
+772,SerialBT.begin ,( localname ismaster bt -- f ),,bluetooth
+773,SerialBT.end ,( bt -- ),,bluetooth
+774,SerialBT.available ,( bt -- f ),,bluetooth
+775,SerialBT.readBytes ,( a n bt -- n ),,bluetooth
+776,SerialBT.write ,( a n bt -- n ),,bluetooth
+777,SerialBT.flush ,( bt -- ),,bluetooth
+778,SerialBT.hasClient ,( bt -- f ),,bluetooth
+779,SerialBT.enableSSP ,( bt -- ),,bluetooth
+780,SerialBT.setPin ,( z bt -- f ),,bluetooth
+781,SerialBT.unpairDevice ,( addr bt -- f ),,bluetooth
+782,SerialBT.connect ,( remotename bt -- f ),,bluetooth
+783,SerialBT.connectAddr ,( addr bt -- f ),,bluetooth
+784,SerialBT.disconnect ,( bt -- f ),,bluetooth
+785,SerialBT.connected ,( timeout bt -- f ),,bluetooth
+786,SerialBT.isReady    ,( checkMaster timeout -- f ),"Default checkMaster=false, timeout=0",bluetooth
+787,,,,
+788,Camera WORDS --(Requires v7.0.6.5+) ,,,VOCABULARY
+790,,,,
+791,esp_camera_init ,( config -- f ),,camera
+792,esp_camera_deinit ,( -- f ),,camera
+793,esp_camera_fb_get ,( -- fb ),,camera
+794,esp_camera_fb_return ,( fb -- ),,camera
+795,esp_camera_sensor_get ,( -- sensor ),,camera
+796,,,,
+797,Camera Server WORDS --(Requires v7.0.6.5+) ,,,VOCABULARY
+799,WIP Prototype - Not yet stable,,,
+800,These words are inside the camera-server vocabulary.,,,
+801,server  ,( port -- ),"Start an image server at port,",
+802,e.g. http://IP/image will produce an image,,,
+803,,,,
+804,RMT  WORDS --(Requires v7.0.6.5+) ,,,VOCABULARY
+807,,,,
+808,rmt_set_clk_div ,( channel div8 -- err ),,RMT
+809,rmt_get_clk_div ,( channel @div8 -- err ),,RMT
+810,rmt_set_rx_idle_thresh,( channel thresh16 -- err ),,RMT
+811,rmt_get_rx_idle_thresh ,( channel @thresh16 -- err ),,RMT
+812,rmt_set_mem_block_num ,( channel memnum8 -- err ),,RMT
+813,rmt_get_mem_block_num ,( channel @memnum8 -- err ),,RMT
+814,rmt_set_tx_carrier ,( channel enable highlev lowlev carrierlev -- err ),,RMT
+815,rmt_set_mem_pd ,( channel f -- err ),,RMT
+816,rmt_get_mem_pd ,( channel @f -- err ),,RMT
+817,rmt_tx_start ,( channel f -- err ),,RMT
+818,rmt_tx_stop ,( channel -- err ),,RMT
+819,rmt_rx_start ,( channel f -- err ),,RMT
+820,rmt_rx_stop ,( channel -- err ),,RMT
+821,rmt_tx_memory_reset ,( channel -- err ),,RMT
+822,rmt_rx_memory_reset ,( channel -- err ),,RMT
+823,rmt_set_memory_owner ,( channel owner -- err ),,RMT
+824,rmt_get_memory_owner ,( channel @owner -- err ),,RMT
+825,rmt_set_tx_loop_mode ,( channel f -- err ),,RMT
+826,rmt_get_tx_loop_mode ,( channel @f -- err ),,RMT
+827,rmt_set_rx_filter ,( channel enable thresh8 -- err ),,RMT
+828,rmt_set_source_clk ,( channel baseclk -- err ),,RMT
+829,rmt_get_source_clk ,( channel @baseclk -- err ),,RMT
+830,rmt_set_idle_level ,( channel enable level -- err ),,RMT
+831,rmt_get_idle_level ,( channel @enable @level -- err ),,RMT
+832,rmt_get_status ,( channel @status -- err ),,RMT
+833,rmt_set_rx_intr_en ,( channel enable -- err ),,RMT
+834,rmt_set_err_intr_en ,( channel enable -- err ),,RMT
+835,rmt_set_tx_intr_en ,( channel enable -- err ),,RMT
+836,rmt_set_tx_thr_intr_en ,(channel enable thresh -- err ),,RMT
+837,rmt_set_gpio ,( channel mode gpio# invertsig -- err ),,RMT
+838,rmt_config ,( rmt_config_t* ),,RMT
+839,rmt_isr_register ,( fn arg allocflags handle -- err ),,RMT
+840,rmt_isr_deregister ,( handle -- err ),,RMT
+841,rmt_fill_tx_items ,( channel @items items# offset -- err ),,RMT
+842,rmt_driver_install ,( channel rxbufsize allocflags -- err ),,RMT
+843,rmt_driver_uinstall ,( channel -- err ),,RMT
+844,rmt_get_channel_status ,( channel @status -- err ),,RMT
+845,rmt_get_counter_clock ,( channel @clockhz -- err ),,RMT
+846,rmt_write_items ,( channel @items items# wait -- err ),,RMT
+847,rmt_wait_tx_done ,( channel time -- err ),,RMT
+848,rmt_get_ringbuf_handle ,( channel @handle -- err ),,RMT
+849,rmt_translator_init ,( channel fn -- err ),,RMT
+850,rmt_translator_set_context ,( channel @context -- err ),,RMT
+851,rmt_translator_get_context ,( channel @@context -- err ),,RMT
+852,rmt_write_sample ,( channel src src# wait -- err ),,RMT
+853,rmt_register_tx_end_callback,,NOT SUPPORTED,RMT
+854,rmt_memory_rw_rst ,,DEPRECATED USE rmt_tx_memory_reset or rmt_rx_memory_reset,RMT
+855,rmt_set_intr_enable_mask ,,DEPRECATED interrupt handled by driver,RMT
+856,rmt_clr_intr_enable_mask ,,DEPRECATED interrupt handled by driver,RMT
+857,rmt_set_pin ,,DEPRECATED use rmt_set_gpio instead,RMT
+858,,,,
+859,EXAMPLES ,,,
+860,,,,
+861,see,"( ""text"" -- )",Attempt to decompile the word which follows in the input stream,forth
+862,"usage  "" see demo "" ",, ,
+863,"Example,  you defined  ""demo""  -->    : demo    1 2 3 +  .  cr cr ;  
+",,,
+864,,,,
+865,"see  demo  <--    will show back its source -->  : demo  1 2 3 + . cr cr ; 
+ok  ",,,
+866,,,,
+867,,,,
+868,WiFi.mode,( n -- ),Set WiFi mode,
+869,0 WIFI_MODE_NULL,"In this mode, the internal data struct is not allocated to the station and the AP, while both the station and AP interfaces are not initialized for RX/TX Wi-Fi data. Generally, this mode is used for Sniffer, or when you only want to stop both the STA and the AP to unload the whole Wi-Fi driver.",,
+870,1 WIFI_MODE_STA,"Station mode: in this mode, will init the internal station data, while the station’s interface is ready for the RX and TX Wi-Fi data.",,
+871,2 WIFI_MODE_AP,"AP mode: in this mode, init the internal AP data, while the AP’s interface is ready for RX/TX Wi-Fi data. Then, the Wi-Fi driver starts broad- casting beacons, and the AP is ready to get connected to other stations.",,
+872,3 WIFI_MODE_APSTA,"Station-AP coexistence mode: in this mode, will simultaneously init both the station and the AP.This is done in station mode and AP mode. Please note that the channel of the external AP, which the ESP Station is connected to, has higher priority over the ESP AP channel.",,
+873,,,,
+874,WiFi.status,( -- n ),Returns the connection status,
+875,"The value of n:-
+
+255 WL_NO_SHIELD - no WiFi shield is present
+0 WL_IDLE_STATUS - WiFi.begin is called and remains active
+                   until the number of attempts expires (resulting in WL_CONNECT_FAILED)
+                   or a connection is established (resulting in WL_CONNECTED)
+1 WL_NO_SSID_AVAIL   - no SSID are available
+2 WL_SCAN_COMPLETED  - scan networks is completed
+3 WL_CONNECTED       - connected to a WiFi network
+4 WL_CONNECT_FAILED  - connection fails for all the attempts
+5 WL_CONNECTION_LOST - connection is lost
+6 WL_DISCONNECTED    - disconnected from a network",,,
+876,,,,
+877,,,,
+878,WiFi connection,( -- ),Connect and disconnect from WiFi demo,
+879,"WiFi
+: ip.        ( n -- )
+2 for
+        256 U/MOD
+next
+>r >r >r
+. 46 emit
+r> . 46 emit
+r> . 46 emit
+r> . 
+;
+: status.    ( -- )                                \ print WiFi connection status
+."" Current WiFi status = "" 
+WiFi.status
+dup 0= if ."" Idle"" then
+dup 1 = if ."" no SSID available"" then
+dup 2 = if ."" scan networks complete"" then
+dup 3 = if ."" connected"" then
+dup 4 = if ."" connection failed"" then
+dup 5 = if ."" connection lost"" then
+6 = if ."" disconnected"" then 
+cr
+;
+: test        ( -- )
+WIFI_MODE_STA WiFi.mode                              \ set up esp32 to connect to an access point 
+z"" yourroutername"" z"" yourpassword"" WiFi.begin       \ attempt to connect
+2000 ms
+status.                                              \ report our Wifi link status
+."" local IP = "" WiFi.localIP ip. cr                  \ report local IP address
+WiFi.disconnect                                      \ disconnect
+."" Now disconnecting"" cr
+2000 ms                
+status.                                              \ report WiFi status again
+;
+\ N.B. edit the above with your router's name and password!!",,,
+880,,,,
+881,,,,
+882,,,,
+883,TASKS example,( -- ),Demonstrates adding a 10 second timer task,
+884,": hi begin ."" Time is: "" ms-ticks . cr 10000 ms again ; \ Print the tick every 10sec.
+' hi 100 100 task my-counter                            \ define my-counter task
+my-counter start-task                                   \ start the my-counter task
+
+\ in between print outs, type tasks .tasks <cr> and observe the active tasks are
+\ main-task my-counter yield-task",,,
+885,,,,
+886,,,,
+887,PIN example,( -- ),Demonstrates toggling GPIO23 at max rate using the PIN word,
+888,": maxtoggle
+      23 output pinMode
+      begin
+           HIGH 23 pin
+           LOW 23 pin
+      key? until ;
+\ A scope showed that the pin remained high for 625nS or so.
+\ It was low for around 2.6uS because of the key? function
+\ slowing things up. So a reasonable speed, all considered",,,
+889,,,,
+890,,,,
+891,,,,
+892,Telnet server,( -- ),"Demonstrates starting the telnet server to enable
+terminal communication with ESP32forth over WiFi",
+893,"z"" yourrouterid"" z"" yourpassword"" login cr   \ Login to your Wifi router 
+telnetd                                      \ vocabulary TELNET
+552 server                                   \ start the telnet server on port 552",,,
+894,,,,
+784,,,,
+785,Interval example,( -- ),Demonstrates starting a timed word with interval,
+786,"Example:
+timers
+variable x
+: hi   1 x +! ;
+' hi 1000000 0 interval ( run hi every second )
+x @ . ( See value of x goes up )
+\ note the input terminal remains reponsive whilst the timer is counting down
+\ there are a total of only four timer channels - so turn to multitasking if more is needed     ",,,
+787,,,,
+788,,,,
+789,r|example,( -- ),Demonstrates making a standalone application with the aid of of a temporary string made with r|,
+790,"r| z"" NETWORK-NAME"" z"" PASSWORD"" webui |     \ create a string to start the web server
+s"" /spiffs/autoexec.fs"" dump-file            \ save it to file autoexec.fs",,,
+791,,,,
+792,,,,
+793,INCLUDE example,( -- ),Demonstrates how to INCLUDE a file in the SPIFFS,
+794," 
+s"" /spiffs/myprogram.fs"" included      \ upload that file first in the Arduino IDE ",,,
+795,,,,
+796,,,,
+793,SPIFF FILEexample, ,Demonstrates how to CREATE a file in the SPIFFS,
+797,"Typical use  : Test ( --fh)  s"" /spiffs/myprogram.fs""   R/W  CREATE-FILE  IF ."" OPEN-FILE FAILED""  -1 throw THEN   ;",,,
+,,,,
+798,Read digital i/p,( gpiono -- ),Continuously display the state of a digital input until a key is pressed,
+799,": test ( gpiono -- ) 
+        DUP INPUT pinMode                    \ set 'gpiono' as an input
+        begin
+                DUP digitalRead . cr         \ display the state of 'gpiono'
+        key? until                           \ until a key is pressed
+        DROP ;                               \ stack tidy
+",,,
+800,,,,
+801,,,,
+802,Sense a digital input change using interrupt,(  -- ),"When the 'boot' button is pressed or released, that change of state is reported on the display",
+803,"interrupts
+
+0 input pinmode                              \ set GPIO0 as an input
+
+: input. ( -- )                              \ display the state of GPIO0
+        ."" GPIO0 input =""
+        0 digitalRead . cr
+;
+
+: pinanyedge ( xt pin -- )                   \ add an ANYEDGE interrupt handler
+        dup GPIO_INTR_ANYEDGE gpio_set_intr_type throw
+        swap 0 gpio_isr_handler_add throw
+;
+
+' input. 0 pinanyedge ( -- )                  \ If GPIO0 changes state, report it
+
+: disableinterrupt ( pin -- )
+        GPIO_INTR_DISABLE gpio_set_intr_type throw
+;
+
+0 disableinterrupt                            \ stop reporting GPIO0 changes
+
+\ This is just a demo - generally you want an interrupt to be as brief as possible
+\ so printing from an interrupt routine is not recommended for real programs",,,
+804,,,,
+805,,,,
+806,Local variables,( n1 n2 -- ),Demonstrates defining a word where the input parameters on the stack are labelled for enhanced readability,
+807,": summ  { foo bar }    \ bar is topmost element of the stack
+        foo bar + .    \ add the two top values on the stack and display the result
+;
+\ so 2 3 summ results in 5 displayed",,,
+808,,,,
+809,,,,
+810,Analogue i/p,(  -- ),Demonstrates reading the volatge present on GPIO14 for 128 samples at 10 samples / s,
+811,"100 value del          \ this value determines the data sample rate
+: delay del ms ;       \ time delay used to pace reading samples
+: read                 ( -- )
+128 0 do               \ Read 128 the input 128 times
+        14 ADC . CR    \ Read the voltage on GPIO14
+        DELAY          \ And pause for 100 mS between each sample
+loop
+;",,,
+812,,,,
+813,,,,
+814,OLED example,,Demonstrates how to talk to the OLED 128x64 pixels,DISPLAY OUTPUT
+815,Oled,,call the oled vocabulary,
+816,OLEDINIT,,initialize display / salutation message,ESP32forth
+817,123 Olednum Oleddisplay,,print a number on the stack,123
+818,Oledhome Oledcls OO ,,"send home the cursor, CLS, OO= Oleddisplay",
+819,"z"" Hello ! "" Oledprint OO",,print a string,Hello
+820,1 1 35 35 1 Oledrect  OO,,draw a rectangle ,[]
+821,Oledinvert  OO,,Invert the display,[]
+822,"\\ #define ENABLE_OLED_SUPPORT  needs to be uncommented in the ESP32forth source file ,    to get OLED words installed",,,
+823,,,,
+824,,,,
+825,NONAME example,,"Demonstrates creating words with no names, which can nevertheless be executed by execution token - saves space in the dictionary if the word is never used by name",
+826,":noname ."" Saturday"" ;
+:noname ."" Friday"" ;
+:noname ."" Thursday"" ;
+:noname ."" Wednesday"" ;
+:noname ."" Tuesday"" ;
+:noname ."" Monday"" ;
+:noname ."" Sunday"" ;
+ 
+create (day) ( --- addr)   \ an array of execution tokens for the 7 headerless words
+, , , , , , ,
+
+: day. ( n -- )            \ valid n=0-6
+cells (day) + @ execute ;
+
+\ executing 2 day. displays Tuesday etc.",,,
+827,,,,
+828,,,,
+829,[IF] [THEN] example,,Demonstrates a phrase that will automatically forget a previous compile using an interpreted conditional statement,
+830,"\ Place this at the top of a forth source file
+
+DEFINED? *codename* [IF] forget *codename* [THEN] 
+: *codename* ;
+
+\ the string *codename* can be anything unique to suit the code file being loaded
+\ if that word is already defined, then the compiled words are forgotten from the
+\ dictionary before being recompiled",,,
+831,,,,
+832,,,,
+833,STARTUP: example,," snapshotting the dictionary and restoring it at startup, with a start word",
+834,": welcome ."" Hello!"" cr 100 0 do i . loop cr ;
+startup: welcome
+bye
+ 
+           ( Next boot will run a custom startup message )
+
+reset
+           ( Reset removes the custom message ) ",,,
+835,,,,
+836,,,,
+837,INTERNALS  ,,This vocabulary has some additional words for more control,
+838,SAVE-NAME ( a n -- ) Save a snapshot of the current vocabulary to a file.,,,
+839,RESTORE-NAME ( a n -- ) Restore a snapshot from a file.,,,
+840,'COLD ( -- a ) Address of the word that will be run on startup.,,,
+841,REMEMBER-FILENAME ( -- a n ) Deferred word specifying the platform specific default snapshot filename.,,,
+842,,,,
+843,UNLOOP example,,Demonstrates a loop being terminated before completion by UNLOOP,
+844,": test
+1000 0 do                               \ start  a 1000 long loop
+key? if                                 \ if a  key was pressed
+        key drop                        \ read the key and drop it
+        cr ."" loop terminating ""        
+        unloop                          \ get rid of the loop
+        exit                            \ return to the calling word
+       then
+cr ."" loopcount = "" i .                 \ show us the loop count
+500 ms                                  \ loop every 1/2 s
+loop
+;",,,
+845,,,,
+,,,,
+,,,,
+,,,,
+,Serial2.begin Serial2.end Serial2.available Serial2.readBytes,,,
+,Serial2.write Serial2.flush serial-builtins,,,
